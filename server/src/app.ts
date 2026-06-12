@@ -1,0 +1,20 @@
+import cors from "cors";
+import express from "express";
+import helmet from "helmet";
+import morgan from "morgan";
+import { env } from "./config/env.js";
+import authRoutes from "./routes/auth.routes.js";
+import passportRoutes from "./routes/passport.routes.js";
+import { errorMiddleware } from "./middleware/error.middleware.js";
+
+export const app = express();
+
+app.use(helmet());
+app.use(cors({ origin: env.clientUrl, credentials: true }));
+app.use(express.json({ limit: "1mb" }));
+app.use(morgan("dev"));
+
+app.get("/api/health", (_req, res) => res.json({ ok: true, service: "cold-inbox-passport" }));
+app.use("/api/auth", authRoutes);
+app.use("/api/passport", passportRoutes);
+app.use(errorMiddleware);
