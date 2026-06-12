@@ -37,14 +37,13 @@ if (env.nodeEnv !== "production") {
   app.use(morgan("dev"));
 }
 
-app.get("/api/health", (_req: Request, res: Response) => {
-  res.json({
+app.get("/api/health", (_req: any, res: any) => {
+  return res.json({
     ok: true,
     service: "cold-inbox-passport",
-    runtime: env.isVercel ? "vercel-function" : "node-server",
+    runtime: "vercel-function",
   });
 });
-
 app.use("/api/auth", authRoutes);
 app.use("/api/passport", passportRoutes);
 

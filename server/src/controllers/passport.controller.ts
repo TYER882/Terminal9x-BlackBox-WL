@@ -1,14 +1,12 @@
 
-import type { Response as ExpressResponse } from "express";
 import { AgentPassport, divisions } from "../models/AgentPassport.js";
 import { User } from "../models/User.js";
-import type { AuthRequest } from "../types/auth.js";
-
+import type { ApiResponse, AuthRequest } from "../types/auth.js";
 function getAuthUserId(req: AuthRequest) {
   return req.user?.id;
 }
 
-export async function getMyPassport(req: AuthRequest, res: ExpressResponse) {
+export async function getMyPassport(req: AuthRequest, res: ApiResponse) {
   const userId = getAuthUserId(req);
 
   if (!userId) {
@@ -28,7 +26,7 @@ export async function getMyPassport(req: AuthRequest, res: ExpressResponse) {
   return res.json({ passport });
 }
 
-export async function updateMyPassport(req: AuthRequest, res: ExpressResponse) {
+export async function updateMyPassport(req: AuthRequest, res: ApiResponse) {
   const userId = getAuthUserId(req);
 
   if (!userId) {
@@ -93,7 +91,7 @@ export async function updateMyPassport(req: AuthRequest, res: ExpressResponse) {
   });
 }
 
-export async function markMinted(req: AuthRequest, res: ExpressResponse) {
+export async function markMinted(req: AuthRequest, res: ApiResponse) {
   const userId = getAuthUserId(req);
 
   if (!userId) {

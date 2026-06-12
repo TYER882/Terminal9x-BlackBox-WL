@@ -1,7 +1,6 @@
 // server/src/controllers/auth.controller.ts
 import bcrypt from "bcryptjs";
-import type { Response as ExpressResponse } from "express";
-import type { AuthRequest } from "../types/auth.js";
+import type { ApiResponse, AuthRequest } from "../types/auth.js";
 import { AgentPassport, divisions } from "../models/AgentPassport.js";
 import { User } from "../models/User.js";
 import { signToken } from "../utils/jwt.js";
@@ -15,7 +14,7 @@ function makeWhitelistCode(username: string) {
   return `T9X-WL-${username.slice(0, 4).toUpperCase()}-${random}`;
 }
 
-export async function register(req: AuthRequest, res: ExpressResponse) {
+export async function register(req: AuthRequest, res: ApiResponse) {
   const { username, email, password, division, referralCode } = req.body as {
     username?: string;
     email?: string;
@@ -80,7 +79,7 @@ export async function register(req: AuthRequest, res: ExpressResponse) {
   });
 }
 
-export async function login(req: AuthRequest, res: ExpressResponse) {
+export async function login(req: AuthRequest, res: ApiResponse) {
   const { email, password } = req.body as {
     email?: string;
     password?: string;
@@ -123,7 +122,7 @@ export async function login(req: AuthRequest, res: ExpressResponse) {
   });
 }
 
-export async function me(req: AuthRequest, res: ExpressResponse) {
+export async function me(req: AuthRequest, res: ApiResponse) {
   const userId = req.user?.id;
 
   if (!userId) {

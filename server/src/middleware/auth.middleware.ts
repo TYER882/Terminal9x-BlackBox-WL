@@ -1,32 +1,28 @@
-import type {
-  NextFunction as ExpressNextFunction,
-  Response as ExpressResponse,
-} from "express";
 import jwt from "jsonwebtoken";
-import type { AuthRequest, AuthUser } from "../types/auth.js";
+import type { ApiNext, ApiResponse, AuthRequest, AuthUser } from "../types/auth.js";
 
 type JwtPayload = {
-  id: string;
-  email: string;
+  id?: string;
+  sub?: string;
+  email?: string;
   agentId?: string;
   role?: "agent" | "master";
 };
 
 export function requireAuth(
   req: AuthRequest,
-  res: ExpressResponse,
-  next: ExpressNextFunction
+  res: ApiResponse,
+  next: ApiNext
 ) {
   const header = req.headers.authorization;
 
-  if (!header?.startsWith("Bearer ")) {
+  if (!header || !header.startsWith("Bearer ")) {
     return res.status(401).json({
-      ok: false,
-      error: "Missing authorization token",
+      message: "Missing authorization token.",
     });
   }
 
-  const token = header.replace("Bearer ", "");
+  const token = header.replace("Bearer ", "").trim();
 
   try {
     const decoded = jwt.verify(
@@ -34,24 +30,27 @@ export function requireAuth(
       process.env.JWT_SECRET || "dev-secret"
     ) as JwtPayload;
 
+    const userId = decoded.id || decoded.sub;
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "Invalid authorization token.",
+      });
+    }
+
     const user: AuthUser = {
-      id: decoded.id,
+      id: userId,
       email: decoded.email,
       agentId: decoded.agentId,
       role: decoded.role,
     };
 
-    req.user = {
-  id: decoded.id,
-  email: decoded.email,
-  agentId: decoded.agentId,
-  role: decoded.role,
-};
+    req.user = user;
+
     return next();
   } catch {
     return res.status(401).json({
-      ok: false,
-      error: "Invalid authorization token",
+      message: "Invalid authorization token.",
     });
   }
 }
