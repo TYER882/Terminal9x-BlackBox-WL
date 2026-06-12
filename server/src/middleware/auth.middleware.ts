@@ -1,25 +1,37 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, RequestHandler, Response } from "express";
 import { User } from "../models/User.js";
 import { verifyToken } from "../utils/jwt.js";
 
-export type AuthRequest = Request & { userId?: string };
+export type AuthRequest = Request & {
+  userId?: string;
+};
 
-export async function requireAuth(req: AuthRequest, res: Response, next: NextFunction) {
+export const requireAuth: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
+    const authReq = req as AuthRequest;
     const header = req.headers.authorization;
+
     if (!header?.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "Missing bearer token." });
+      res.status(401).json({ message: "Missing bearer token." });
+      return;
     }
 
     const token = header.slice(7);
     const payload = verifyToken(token);
     const user = await User.findById(payload.userId).select("_id");
 
-    if (!user) return res.status(401).json({ message: "Invalid token user." });
+    if (!user) {
+      res.status(401).json({ message: "Invalid token user." });
+      return;
+    }
 
-    req.userId = String(user._id);
+    authReq.userId = String(user._id);
     next();
   } catch {
     res.status(401).json({ message: "Unauthorized." });
   }
-}
+};

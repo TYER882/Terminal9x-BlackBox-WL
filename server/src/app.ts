@@ -1,5 +1,6 @@
 import cors from "cors";
 import express from "express";
+import type { Request, Response } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import { env } from "./config/env.js";
@@ -36,7 +37,7 @@ if (env.nodeEnv !== "production") {
   app.use(morgan("dev"));
 }
 
-app.get("/api/health", (_req, res) => {
+app.get("/api/health", (_req: Request, res: Response) => {
   res.json({
     ok: true,
     service: "cold-inbox-passport",
