@@ -163,7 +163,7 @@ export function RegisterPage() {
 
   if (loading) {
     return (
-      <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-navy p-4 text-center scanlines">
+      <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-navy p-4 text-center ">
         <AuthBackground />
 
         <motion.div
@@ -211,7 +211,7 @@ export function RegisterPage() {
                 Whitelist Node Open
               </div>
 
-              <h1 className="flicker-text text-4xl font-black uppercase tracking-[0.14em] text-white sm:text-5xl xl:text-6xl">
+              <h1 className=" text-4xl font-black uppercase tracking-[0.14em] text-white sm:text-5xl xl:text-6xl">
                 Join T9X Whitelist
               </h1>
 
